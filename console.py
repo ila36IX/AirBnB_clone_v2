@@ -11,6 +11,14 @@ from models.city import City
 from models.amenity import Amenity
 from models.review import Review
 
+def isfloat(string):
+    """checking if a string can be a float"""
+    try:
+        float(string)
+        return True
+    except ValueError:
+        return False
+
 
 class HBNBCommand(cmd.Cmd):
     """ Contains the functionality for the HBNB console"""
@@ -113,18 +121,34 @@ class HBNBCommand(cmd.Cmd):
         """ Overrides the emptyline method of CMD """
         pass
 
-    def do_create(self, args):
+    def do_create(self, arg):
         """ Create an object of any class"""
-        if not args:
+        args = arg.split(' ')
+        if not args[0]:
             print("** class name missing **")
             return
-        elif args not in HBNBCommand.classes:
+        elif args[0] not in HBNBCommand.classes:
             print("** class doesn't exist **")
             return
-        new_instance = HBNBCommand.classes[args]()
-        storage.save()
+        new_instance = HBNBCommand.classes[args[0]]()
+        args = args[1: ]
+        for arg in args:
+            arg = arg.split('=') + ['']
+            key = arg[0]
+            val = arg[1]
+            if val.isdigit():
+                val = int(val)
+            elif isfloat(val):
+                val = float(val)
+            elif val.startswith('"') and val.endswith('"'):
+                val = val[1: -1]
+                val = val.replace('_', ' ')
+                val = val.replace('\\"', '"')
+            else:
+                continue
+            new_instance.__dict__[key] = val
         print(new_instance.id)
-        storage.save()
+        new_instance.save()
 
     def help_create(self):
         """ Help information for the create method """
