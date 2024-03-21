@@ -16,7 +16,7 @@ class FileStorage:
 
         for key, value in FileStorage.__objects.items():
             if key.split('.')[0] == cls.__name__:
-                result[key] = (val)
+                result[key] = (value)
         return result
 
     def new(self, obj):
@@ -33,7 +33,7 @@ class FileStorage:
             json.dump(temp, f)
 
     def delete(self, obj=None):
-        """usage: delete objects"""
+        """ Delete an obj from __objects, if obj is None nothing will heppen """
         if obj is None:
             return
         key = obj.to_dict()['__class__'] + '.' + obj.id
