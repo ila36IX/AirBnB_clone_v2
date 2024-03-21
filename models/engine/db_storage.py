@@ -12,7 +12,7 @@ from models.city import City
 from models.amenity import Amenity
 from models.review import Review
 
-classes = {"City": City,"State": State}
+#classes = {"City": City,"State": State}
 class DBStorage:
     """The databse engine"""
     __engine = None
