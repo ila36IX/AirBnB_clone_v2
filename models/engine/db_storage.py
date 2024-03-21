@@ -12,13 +12,12 @@ from models.city import City
 from models.amenity import Amenity
 from models.review import Review
 
+classes = {"City": City,"State": State}
 class DBStorage:
     """The databse engine"""
     __engine = None
     __session = None
-    __classes = {
-                'State': State, 'City': City
-              }
+    #classes = {"City": City,"State": State, "User": User}
 
     def __init__(self):
         """Constructor of the DBStorage engine"""
@@ -36,12 +35,16 @@ class DBStorage:
     def all(self, cls=None):
         """query on the current db depending of the class name"""
         objects = {}
-        if cls is None:
-            for CLS in self.__classes.values():
-                objects.update(self.__session.query(CLS).all())
-        else:
-            objects = self.__session.query(cls).all()
-        return {f"{type(o).__name__}.{o.id}":o.pop("_sa_instance_state", None) for o in objects}
+        classes = [User, State, City]
+        if cls is not None:
+            classes = [cls]
+        for cls in classes:
+            query = self.__session.query(cls)
+            for row in query.all():
+                key = cls.__name__ + '.' + row.id
+                objects[key] = row
+        #print(objects)
+        return (objects)
 
     def new(self, obj):
         """add the object to the current database session"""
