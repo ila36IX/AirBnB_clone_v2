@@ -4,6 +4,7 @@ import unittest
 from models.base_model import BaseModel
 from models import storage
 import os
+from console import HBNBCommand
 
 
 class test_fileStorage(unittest.TestCase):
@@ -105,5 +106,81 @@ class test_fileStorage(unittest.TestCase):
     def test_storage_var_created(self):
         """ FileStorage object storage created """
         from models.engine.file_storage import FileStorage
-        print(type(storage))
         self.assertEqual(type(storage), FileStorage)
+
+    def test_key_val_str_att(self):
+        """ Using key="value" syntax is creating the attrebute key """
+        cmd = HBNBCommand()
+        cmd.do_create('User name="Alien"')
+        created_instance = list(storage.all().values())[0]
+        self.assertTrue(hasattr(created_instance, "name"))
+    
+    def test_key_val_str_value(self):
+        """ Using key="value" syntax is creating the the right value """
+        cmd = HBNBCommand()
+        cmd.do_create('User name="Alien"')
+        created_instance = list(storage.all().values())[0]
+        self.assertEqual(created_instance.name, "Alien")
+
+    def test_key_val_str_value_quote(self):
+        """ Using key="value" syntax is creating the the right value if contains quote """
+        cmd = HBNBCommand()
+        cmd.do_create('User name="Ali"en"')
+        created_instance = list(storage.all().values())[0]
+        self.assertEqual(created_instance.name, "Ali\"en")
+
+    def test_key_val_str_value_underqcore(self):
+        """ Using key="value" syntax is creating the the right value if contains underscores """
+        cmd = HBNBCommand()
+        cmd.do_create('User wise="Testing_is_everthing!"')
+        created_instance = list(storage.all().values())[0]
+        self.assertEqual(created_instance.wise, "Testing is everthing!")
+
+    def test_key_val_str_type(self):
+        """ Test the feature of key="value" syntax """
+        cmd = HBNBCommand()
+        cmd.do_create('User name="Alien"')
+        created_instance = list(storage.all().values())[0]
+        self.assertIsInstance(created_instance.name, str)
+
+    def test_key_val_int_att(self):
+        """ Using key=int syntax is creating the attrebute key """
+        cmd = HBNBCommand()
+        cmd.do_create('User number=69')
+        created_instance = list(storage.all().values())[0]
+        self.assertTrue(hasattr(created_instance, "number"))
+    
+    def test_key_val_int_value(self):
+        """ Using key=int syntax is creating the the right value """
+        cmd = HBNBCommand()
+        cmd.do_create('User number=69')
+        created_instance = list(storage.all().values())[0]
+        self.assertEqual(created_instance.number, 69)
+
+    def test_key_val_int_type(self):
+        """ key=int syntax is creating a value of the right type """
+        cmd = HBNBCommand()
+        cmd.do_create('User number=69')
+        created_instance = list(storage.all().values())[0]
+        self.assertIsInstance(created_instance.number, int)
+
+    def test_key_val_float_att(self):
+        """ Using key=float syntax is creating the attrebute key """
+        cmd = HBNBCommand()
+        cmd.do_create('User price=69.3')
+        created_instance = list(storage.all().values())[0]
+        self.assertTrue(hasattr(created_instance, "price"))
+    
+    def test_key_val_float_value(self):
+        """ Using key=float syntax is creating the the right value """
+        cmd = HBNBCommand()
+        cmd.do_create('User price=69.3')
+        created_instance = list(storage.all().values())[0]
+        self.assertEqual(created_instance.price, 69.3)
+
+    def test_key_val_float_type(self):
+        """ key=float syntax is creating a value of the right type """
+        cmd = HBNBCommand()
+        cmd.do_create('User price=69.3')
+        created_instance = list(storage.all().values())[0]
+        self.assertIsInstance(created_instance.price, float)
