@@ -35,7 +35,7 @@ class DBStorage:
     def all(self, cls=None):
         """query on the current db depending of the class name"""
         objects = {}
-        classes = [User, State, City]
+        classes = [User, State, City, Place]
         if cls is not None:
             classes = [cls]
         for cls in classes:
