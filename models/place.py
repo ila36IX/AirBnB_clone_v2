@@ -30,7 +30,7 @@ class Place(BaseModel, Base):
     
     # this is for DBStorage
     reviews = relationship('Review', cascade='all, delete', backref='place')
-    amenities = relationship('Amenity', cascad='all, delete',
+    amenities = relationship('Amenity', cascade='all, delete',
                             backref='place_amenity',
                             secondary=place_amenity,
                             viewonly=False)
