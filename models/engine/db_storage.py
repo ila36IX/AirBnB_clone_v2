@@ -5,14 +5,13 @@ from sqlalchemy import create_engine, MetaData
 from sqlalchemy.orm import sessionmaker, scoped_session
 from os import getenv
 from models.base_model import Base
-from models.user import User
-from models.place import Place
 from models.state import State
 from models.city import City
+from models.user import User
+from models.place import Place
 from models.amenity import Amenity
 from models.review import Review
 
-#classes = {"City": City,"State": State}
 class DBStorage:
     """The databse engine"""
     __engine = None
@@ -43,7 +42,7 @@ class DBStorage:
             for row in query.all():
                 key = cls.__name__ + '.' + row.id
                 objects[key] = row
-        #print(objects)
+
         return (objects)
 
     def new(self, obj):
