@@ -4,6 +4,7 @@ from models.base_model import BaseModel, Base
 from sqlalchemy import Column, String
 from sqlalchemy.orm import relationship
 
+
 class State(BaseModel, Base):
     """ State class """
     __tablename__ = "states"
@@ -16,5 +17,5 @@ class State(BaseModel, Base):
         cities = []
         for instance in storage.all().values():
             if type(instance) is City and instance.state_id == self.id:
-                cities.append(instance) 
+                cities.append(instance)
         return cities

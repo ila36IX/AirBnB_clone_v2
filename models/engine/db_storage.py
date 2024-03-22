@@ -12,11 +12,11 @@ from models.place import Place
 from models.amenity import Amenity
 from models.review import Review
 
+
 class DBStorage:
     """The databse engine"""
     __engine = None
     __session = None
-    #classes = {"City": City,"State": State, "User": User}
 
     def __init__(self):
         """Constructor of the DBStorage engine"""
@@ -61,6 +61,6 @@ class DBStorage:
     def reload(self):
         """create all tables in the database"""
 
-        Base.metadata.create_all(self.__engine) 
+        Base.metadata.create_all(self.__engine)
         Session = sessionmaker(bind=self.__engine, expire_on_commit=False)
         self.__session = scoped_session(Session)
