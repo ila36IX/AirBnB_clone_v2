@@ -1,0 +1,25 @@
+server {
+        listen 80 default_server;
+        listen [::]:80 default_server;
+
+        root /var/www/html;
+
+        index index.html index.htm index.nginx-debian.html;
+
+        server_name _;
+	add_header X-Served-By 477215-web-01;
+
+        location / {
+                try_files $uri $uri/ =404;
+        }
+
+        location /redirect_me {
+                return 301 https://google.com;
+        }
+
+        error_page 404 /not_found.html;
+
+        location /not_found.html {
+                internal;
+        }
+}
