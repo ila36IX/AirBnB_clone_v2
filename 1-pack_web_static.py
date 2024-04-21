@@ -1,13 +1,17 @@
 #!/usr/bin/python3
 """
 Generates a .tgz archive from the contents of the web_static folder of The
-AirBnB Clone repo,
+AirBnB Clone repo
 """
 from fabric.api import *
 from datetime import datetime
 
+
 def do_pack():
-    """generates a .tgz archive from the contents of the web_static folder"""
+    """generates a .tgz archive from the contents of the web_static folder
+    Usage:
+        fab -f 1-pack_web_static.py do_pack
+    """
     local("mkdir -p versions")
     curr_time = datetime.now()
     ver_time = curr_time.strftime("%Y%m%d%H%M%S")
