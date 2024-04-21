@@ -2,6 +2,7 @@
 # Sets up the web servers for the deployment of web_static
 # Install nginx
 sudo apt-get install nginx -y
+sudo ufw allow 'Nginx HTTP'
 
 # Create the essentails directories
 sudo mkdir -p /data/web_static/shared/
