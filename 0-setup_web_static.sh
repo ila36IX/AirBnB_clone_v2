@@ -7,7 +7,7 @@ sudo apt-get install nginx -y
 # Create the essentails directories
 sudo mkdir -p /data/web_static/shared/
 sudo mkdir -p /data/web_static/releases/test/
-sudo echo "Everything is set up perfectly" > /data/web_static/releases/test/index.html
+sudo echo "Everything is set up perfectly" | sudo tee /data/web_static/releases/test/index.html
 
 sudo ln -sf /data/web_static/releases/test/ /data/web_static/current
 
