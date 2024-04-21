@@ -21,3 +21,4 @@ then
 	sed -i "/root/a $hbnb_static_alias" /etc/nginx/sites-available/getalien.tech
 fi
 nginx -s reload
+exit 0
