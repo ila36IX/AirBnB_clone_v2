@@ -1,7 +1,6 @@
 #!/usr/bin/env bash
 # Sets up the web servers for the deployment of web_static
 # Install nginx
-sudo apt-get update -y
 sudo apt-get install nginx -y
 
 # Create the essentails directories
