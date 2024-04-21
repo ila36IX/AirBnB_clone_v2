@@ -12,7 +12,7 @@ sudo echo "Everything is set up perfectly" | sudo tee /data/web_static/releases/
 sudo ln -sf /data/web_static/releases/test/ /data/web_static/current
 
 # Give the ubuntu user the ownership of /data/
-sudo chown ubuntu:ubuntu -R /data
+sudo chown -R ubuntu:ubuntu /data
 
 # Update the Nginx configuration to serve the content of
 # /data/web_static/current/ to hbnb_static.
