@@ -1,24 +1,27 @@
 #!/usr/bin/env bash
-# Sets up the web servers for the deployment of web_static
-# Install nginx
-sudo apt-get install nginx -y
+# Bash script that sets up web servers for the deployment of web_static
+sudo apt-get update
+sudo apt-get -y install nginx
 sudo ufw allow 'Nginx HTTP'
 
-# Create the essentails directories
+sudo mkdir -p /data/
+sudo mkdir -p /data/web_static/
+sudo mkdir -p /data/web_static/releases/
 sudo mkdir -p /data/web_static/shared/
 sudo mkdir -p /data/web_static/releases/test/
-sudo echo "Everything is set up perfectly" | sudo tee /data/web_static/releases/test/index.html
+sudo touch /data/web_static/releases/test/index.html
+sudo echo "<html>
+  <head>
+  </head>
+  <body>
+    Holberton School
+  </body>
+</html>" | sudo tee /data/web_static/releases/test/index.html
 
-sudo ln -sf /data/web_static/releases/test/ /data/web_static/current
+sudo ln -s -f /data/web_static/releases/test/ /data/web_static/current
 
-# Give the ubuntu user the ownership of /data/
-sudo chown -R ubuntu:ubuntu /data
+sudo chown -R ubuntu:ubuntu /data/
 
-# Update the Nginx configuration to serve the content of
-# /data/web_static/current/ to hbnb_static.
-if [ "$(grep -c "location /hbnb_static" /etc/nginx/sites-available/getalien.tech)" -ne 1 ]
-then
-	hbnb_static_alias="location \/hbnb_static \{\nalias \/data\/web_static\/current\/\;autoindex off\;\n\}"
-	sudo sed -i "/root/a $hbnb_static_alias" /etc/nginx/sites-available/getalien.tech
-fi
-sudo nginx -s reload
+sudo sed -i '/listen 80 default_server/a location /hbnb_static { alias /data/web_static/current/;}' /etc/nginx/sites-enabled/default
+
+sudo service nginx restart
