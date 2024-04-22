@@ -12,6 +12,25 @@ env.hosts = [
     "54.210.152.224"
 ]
 
+
+def do_pack():
+    """generates a .tgz archive from the contents of the web_static folder
+    Usage:
+        fab -f 1-pack_web_static.py do_pack
+    """
+    local("mkdir -p versions")
+    curr_time = datetime.now()
+    ver_time = curr_time.strftime("%Y%m%d%H%M%S")
+    tar_path = "versions/web_static_{}.tgz".format(ver_time)
+
+    r = local("tar czf {} web_static/".format(tar_path))
+
+    if r.succeeded:
+        return tar_path
+    else:
+        return None
+
+
 def Uploading(archive_path):
     """Helper function to avoid long lines"""
     # Upload the archive to the /tmp/ directory of the web server
