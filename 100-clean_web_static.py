@@ -11,13 +11,14 @@ import os.path
 #     "54.210.152.224"
 # ]
 
-def do_clean(number):
+def do_clean(number=0):
     """Deletes out-of-date archives,
     - number: is the number of the archives to keep.
     
     Usage:
         fab -f script_file do_clean
     """
+    if number == 
     list_archives = local("ls -1vr versions/web_static*", capture=True)
     for archive in list_archives.split("\n")[:int(number)]:
         print("rm -rf {}".format(archive))
