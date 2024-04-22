@@ -19,11 +19,6 @@ def do_deploy(archive_path):
             do_deploy:<path/to/archive>
             [-i my_ssh_private_key -u ubuntu]
     """
-        """ method doc
-        fab -f 2-do_deploy_web_static.py do_deploy:
-        archive_path=versions/web_static_20231004201306.tgz
-        -i ~/.ssh/id_rsa -u ubuntu
-    """
     try:
         if not os.path.exists(archive_path):
             return False
