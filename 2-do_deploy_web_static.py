@@ -11,7 +11,6 @@ env.hosts = [
     "54.210.152.224"
 ]
 
-
 def do_pack():
     """generates a .tgz archive from the contents of the web_static folder
     Usage:
@@ -29,7 +28,6 @@ def do_pack():
     else:
         return None
 
-
 def Uploading(archive_path):
     """Helper function to avoid long lines"""
     # Upload the archive to the /tmp/ directory of the web server
@@ -45,7 +43,7 @@ def Uploading(archive_path):
 
     # Extract the archive into releases_path
     tar_args = (remote_archive_path, releases_path)
-    cmd = run("tar xvf {} --directory={}".format(*tar_args))
+    cmd = run("tar -xzf {} -C {}".format(*tar_args))
 
     # We done with the archive, so let's get ride of it
     run("rm {}".format(remote_archive_path))
@@ -61,7 +59,6 @@ def Uploading(archive_path):
     run("rm /data/web_static/current")
     run("ln -sf {} /data/web_static/current".format(new_release_path))
 
-
 def do_deploy(archive_path):
     """Distributes an archive to your web servers
         Usage:
@@ -69,7 +66,7 @@ def do_deploy(archive_path):
             do_deploy:<path/to/archive>
             [-i my_ssh_private_key -u ubuntu]
     """
-    if not os.path.isfile(archive_path):
+    if not os.path.exists(archive_path):
         return False
     try:
         Uploading(archive_path)
