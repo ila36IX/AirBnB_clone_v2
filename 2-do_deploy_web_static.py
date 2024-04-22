@@ -11,47 +11,67 @@ env.hosts = [
     "54.210.152.224"
 ]
 
+def do_pack():
+    """generates a .tgz archive from the contents of the web_static folder
+    Usage:
+        fab -f 1-pack_web_static.py do_pack
+    """
+    local("mkdir -p versions")
+    curr_time = datetime.now()
+    ver_time = curr_time.strftime("%Y%m%d%H%M%S")
+    tar_path = "versions/web_static_{}.tgz".format(ver_time)
+
+    r = local("tar czf {} web_static/".format(tar_path))
+
+    if r.succeeded:
+        return tar_path
+    else:
+        return None
+
+def Uploading(archive_path):
+    """Helper function to avoid long lines"""
+    # Upload the archive to the /tmp/ directory of the web server
+    put(archive_path, "/tmp/")
+
+    releases_path = "/data/web_static/releases/"
+    # Get the name of the archive web_static_longdate.org
+    archive_file = archive_path.split("/")[-1]
+    # The path where archive is located in the curr remote server
+    remote_archive_path = "/tmp/" + archive_file
+    # The path where archive will be extracted
+    new_release_path = releases_path + archive_file.split(".")[-2]
+
+    # Extract the archive into releases_path
+    tar_args = (remote_archive_path, releases_path)
+    cmd = run("tar xvf {} --directory={}".format(*tar_args))
+
+    # We done with the archive, so let's get ride of it
+    run("rm {}".format(remote_archive_path))
+
+    # The archive is consists of the directory web_static, so I had to mess
+    # around with it to get its content moved to new_release_path, and finally
+    # remove it, Please DO NOT ask me why I didn't compress the files directly
+    # into the archive file, I was told to do it this way.
+    run("mkdir -p {}".format(new_release_path))
+    run("cp -r {}/* {}/".format(releases_path+"web_static", new_release_path))
+    run("rm -rf {}".format(releases_path+"web_static"))
+
+    run("rm /data/web_static/current")
+    run("ln -sf {} /data/web_static/current".format(new_release_path))
 
 def do_deploy(archive_path):
-    """Deploy web files to server
+    """Distributes an archive to your web servers
+        Usage:
+            fab -f 2-do_deploy_web_static.py
+            do_deploy:<path/to/archive>
+            [-i my_ssh_private_key -u ubuntu]
     """
-    try:
-        if not (path.exists(archive_path)):
-            return False
-
-        # upload archive
-        put(archive_path, '/tmp/')
-
-        # create target dir
-        timestamp = archive_path[-18:-4]
-        run('sudo mkdir -p /data/web_static/\
-releases/web_static_{}/'.format(timestamp))
-
-        # uncompress archive and delete .tgz
-        run('sudo tar -xzf /tmp/web_static_{}.tgz -C \
-/data/web_static/releases/web_static_{}/'
-            .format(timestamp, timestamp))
-
-        # remove archive
-        run('sudo rm /tmp/web_static_{}.tgz'.format(timestamp))
-
-        # move contents into host web_static
-        run('sudo mv /data/web_static/releases/web_static_{}/web_static/* \
-/data/web_static/releases/web_static_{}/'.format(timestamp, timestamp))
-
-        # remove extraneous web_static dir
-        run('sudo rm -rf /data/web_static/releases/\
-web_static_{}/web_static'
-            .format(timestamp))
-
-        # delete pre-existing sym link
-        run('sudo rm -rf /data/web_static/current')
-
-        # re-establish symbolic link
-        run('sudo ln -s /data/web_static/releases/\
-web_static_{}/ /data/web_static/current'.format(timestamp))
-    except Exception as e:
+    if not os.path.exists(archive_path):
         return False
-
-    # return True on success
-    return True
+    try:
+        Uploading(archive_path)
+        print("--- Everything goes well ---")
+        return True
+    except Exception as e:
+        print("Some thing went worng!")
+        return False
