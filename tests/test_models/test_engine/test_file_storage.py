@@ -22,7 +22,7 @@ class test_fileStorage(unittest.TestCase):
         """ Remove storage file at end of tests """
         try:
             os.remove('file.json')
-        except:
+        except Exception as e:
             pass
 
     def test_obj_list_empty(self):
@@ -43,7 +43,7 @@ class test_fileStorage(unittest.TestCase):
         new.save()
         temp = storage.all()
         self.assertIsInstance(temp, dict)
-    
+
     def test_base_model_instantiation(self):
         """ File is not created on BaseModel save """
         new = BaseModel()
@@ -104,7 +104,8 @@ class test_fileStorage(unittest.TestCase):
         new = BaseModel()
         new.save()
         _id = new.to_dict()['id']
-               
+
+        # Don't worry the is one record ni this list
         temp = list(storage.all().keys())[0]
         self.assertEqual(temp, 'BaseModel' + '.' + _id)
 
@@ -119,7 +120,7 @@ class test_fileStorage(unittest.TestCase):
         cmd.do_create('User name="Alien"')
         created_instance = list(storage.all().values())[0]
         self.assertTrue(hasattr(created_instance, "name"))
-    
+
     def test_key_val_str_value(self):
         """ Using key="value" syntax is creating the the right value """
         cmd = HBNBCommand()
@@ -128,14 +129,18 @@ class test_fileStorage(unittest.TestCase):
         self.assertEqual(created_instance.name, "Alien")
 
     def test_key_val_str_value_quote(self):
-        """ Using key="value" syntax is creating the the right value if contains quote """
+        """ Using key="value" syntax is creating the the right value if
+        contains quote
+        """
         cmd = HBNBCommand()
         cmd.do_create('User name="Ali"en"')
         created_instance = list(storage.all().values())[0]
         self.assertEqual(created_instance.name, "Ali\"en")
 
     def test_key_val_str_value_underqcore(self):
-        """ Using key="value" syntax is creating the the right value if contains underscores """
+        """ Using key="value" syntax is creating the the right value if
+        contains underscores
+        """
         cmd = HBNBCommand()
         cmd.do_create('User wise="Testing_is_everthing!"')
         created_instance = list(storage.all().values())[0]
@@ -154,7 +159,7 @@ class test_fileStorage(unittest.TestCase):
         cmd.do_create('User number=69')
         created_instance = list(storage.all().values())[0]
         self.assertTrue(hasattr(created_instance, "number"))
-    
+
     def test_key_val_int_value(self):
         """ Using key=int syntax is creating the the right value """
         cmd = HBNBCommand()
@@ -175,7 +180,7 @@ class test_fileStorage(unittest.TestCase):
         cmd.do_create('User price=69.3')
         created_instance = list(storage.all().values())[0]
         self.assertTrue(hasattr(created_instance, "price"))
-    
+
     def test_key_val_float_value(self):
         """ Using key=float syntax is creating the the right value """
         cmd = HBNBCommand()

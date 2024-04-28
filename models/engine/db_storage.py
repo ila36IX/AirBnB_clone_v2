@@ -20,16 +20,20 @@ class DBStorage:
 
     def __init__(self):
         """Constructor of the DBStorage engine"""
-        self.__engine = create_engine("mysql+mysqldb://{}:{}@{}/{}".\
-                                      format(getenv("HBNB_MYSQL_USER"),
-                                             getenv("HBNB_MYSQL_PWD"),
-                                             getenv("HBNB_MYSQL_HOST"),
-                                             getenv("HBNB_MYSQL_DB"),
-                                             pool_pre_ping=True))
+        env_vars = [
+            getenv("HBNB_MYSQL_USER"),
+            getenv("HBNB_MYSQL_PWD"),
+            getenv("HBNB_MYSQL_HOST"),
+            getenv("HBNB_MYSQL_DB")
+        ]
+        db_info = "mysql+mysqldb://{}:{}@{}/{}".format(*env_vars)
+        self.__engine = create_engine(db_info, pool_pre_ping=True)
         if getenv("HBNB_ENV") == "test":
+            print("Warning! This is a testing envirnement!")
+            print(f"Everything will be deleted in {env_vars[3]}")
             metadata = MetaData()
-            metadata.reflect(engine)
-            metadata.drop_all(engine)
+            metadata.reflect(self.__engine)
+            metadata.drop_all(self.__engine)
 
     def all(self, cls=None):
         """query on the current db depending of the class name"""
@@ -60,7 +64,10 @@ class DBStorage:
 
     def reload(self):
         """create all tables in the database"""
-
         Base.metadata.create_all(self.__engine)
         Session = sessionmaker(bind=self.__engine, expire_on_commit=False)
         self.__session = scoped_session(Session)
+
+    def close(self):
+        """releasing any connection/transactional resources owned by session"""
+        self.__session.remove()

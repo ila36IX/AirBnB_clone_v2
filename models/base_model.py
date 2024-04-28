@@ -16,24 +16,25 @@ class BaseModel:
 
     def __init__(self, *args, **kwargs):
         """Instatntiates a new model"""
-        if not kwargs:
-            from models import storage
-            self.id = str(uuid.uuid4())
-            self.created_at = datetime.now()
-            self.updated_at = datetime.now()
-            # storage.new(self)
-        else:
-            kwargs['updated_at'] = datetime.strptime(kwargs['updated_at'],
-                                                     '%Y-%m-%dT%H:%M:%S.%f')
-            kwargs['created_at'] = datetime.strptime(kwargs['created_at'],
-                                                     '%Y-%m-%dT%H:%M:%S.%f')
-            del kwargs['__class__']
-            self.__dict__.update(kwargs)
+        # I have no Idea if this will work without this line
+        # from models import storage
+        self.id = kwargs.get("id", str(uuid.uuid4()))
+        # <name>_t referes to time
+        str_t = datetime.strptime
+        now_t = datetime.utcnow
+        format_t = "%Y-%m-%dT%H:%M:%S.%f"
+        created_t = kwargs.get("created_at", now_t().isoformat())
+        updated_t = kwargs.get("updated_at", now_t().isoformat())
+        kwargs['created_at'] = str_t(created_t, format_t)
+        kwargs['updated_at'] = str_t(updated_t, format_t)
+        kwargs.pop('__class__', None)
+        self.__dict__.update(kwargs)
+        # storage.new(self)
 
     def __str__(self):
         """Returns a string representation of the instance"""
         cls = (str(type(self)).split('.')[-1]).split('\'')[0]
-        return '[{}] ({}) {}'.format(cls, self.id, self.__dict__)
+        return '[{}] ({}) {}'.format(cls, self.id, self.to_dict())
 
     def save(self):
         """Updates updated_at with current time when instance is changed"""
@@ -50,8 +51,7 @@ class BaseModel:
                           (str(type(self)).split('.')[-1]).split('\'')[0]})
         dictionary['created_at'] = self.created_at.isoformat()
         dictionary['updated_at'] = self.updated_at.isoformat()
-        if dictionary.get("_sa_instance_state"):
-            del dictionary["_sa_instance_state"]
+        dictionary.pop("_sa_instance_state", None)
         return dictionary
 
     def delete(self):

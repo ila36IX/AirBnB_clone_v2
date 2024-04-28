@@ -3,6 +3,8 @@
 from models.base_model import BaseModel, Base
 from sqlalchemy import Column, String, Integer, Float, ForeignKey, Table
 from sqlalchemy.orm import relationship
+from os import getenv
+
 
 place_amenity = Table('place_amenity', Base.metadata,
                       Column('place_id', String(60),
@@ -29,30 +31,39 @@ class Place(BaseModel, Base):
     longitude = Column(Float, nullable=True)
     amenity_ids = []
 
-    # this is for DBStorage
+    # This is for DBStorage
     reviews = relationship('Review', cascade='all, delete', backref='place')
     amenities = relationship('Amenity', cascade='all, delete',
-                             backref='place_amenity',
                              secondary=place_amenity,
+                             backref="places",
                              viewonly=False)
 
-    # this is for FileStorage
-    @property
-    def reviews(self):
-        """list of review instance """
-        rev_list = []
-        for rev in self.reviews:
-            if rev.place_id == self.id:
-                review_list.append(rev)
+    if getenv("HBNB_TYPE_STORAGE") != "db":
+        # this is for FileStorage
+        @property
+        def reviews(self):
+            """list of review instance """
+            rev_list = []
+            for rev in self.reviews:
+                if rev.place_id == self.id:
+                    review_list.append(rev)
 
-        return (rev_list)
+            return (rev_list)
 
-    @property
-    def amenities(self):
-        """method to return all list of Amenity instance"""
-        pass
+        @property
+        def amenities(self):
+            """method to return all list of Amenity instance"""
+            from models import storage
+            from models.amenity import Amenity
+            amenities_instances = storage.all(Amenity)
+            place_amenites = []
+            for amenity_id in self.amenity_ids:
+                for amenity in amenities_instances:
+                    if amenity.id == amenity_id:
+                        place_amenites.append(amenity)
+            return place_amenites
 
-    @amenities.setter
-    def amenities(self):
-        """setter method to handle append method"""
-        pass
+        @amenities.setter
+        def amenities(self, amenity_id):
+            """setter method to handle append method"""
+            amenity_id.append(amenity_id)

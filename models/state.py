@@ -13,9 +13,11 @@ class State(BaseModel, Base):
 
     @property
     def cities(self):
-        """The cities property. for file Storage"""
+        """Get all city objects linked to the current State"""
+        from models import storage
+        from models.city import City
         cities = []
-        for instance in storage.all().values():
-            if type(instance) is City and instance.state_id == self.id:
+        for instance in storage.all(City).values():
+            if instance.state_id == self.id:
                 cities.append(instance)
         return cities
