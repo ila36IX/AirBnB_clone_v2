@@ -6,20 +6,24 @@ from flask import Flask
 
 app = Flask(__name__)
 
+
 @app.route("/")
 def hello_flask():
     """Display Hello"""
     return "Hello HBNB!"
+
 
 @app.route("/hbnb")
 def hello_hbnb():
     """Display HBNB"""
     return "HBNB"
 
+
 @app.route("/c/<text>")
 def c_is_fun(text):
     """Handle link input"""
     return "c " + text.replace("_", " ")
+
 
 @app.route("/python/<text>")
 @app.route("/python/")
@@ -30,10 +34,12 @@ def python_is_cool(text=None):
         text = "is cool"
     return "python " + text.replace("_", " ")
 
+
 @app.route("/number/<int:n>")
 def aliens_hate_numbers(n=None):
     """Handle link input"""
     return f"{n} is a number"
+
 
 app.url_map.strict_slashes = False
 if __name__ == '__main__':

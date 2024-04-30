@@ -6,15 +6,18 @@ from flask import Flask
 
 app = Flask(__name__)
 
+
 @app.route("/")
 def hello_flask():
     """Display Hello"""
     return "Hello HBNB!"
 
+
 @app.route("/hbnb")
 def hello_hbnb():
     """Display HBNB"""
     return "HBNB"
+
 
 app.url_map.strict_slashes = False
 if __name__ == '__main__':
